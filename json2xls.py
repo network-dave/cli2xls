@@ -66,13 +66,13 @@ def add_table_to_workbook(table, filename, sheetname="default"):
     # If XLS file exists, insert the table in a new worksheet else create a new workbook file
     if os.path.exists(filename):
         wb = load_workbook(filename)
-        logging.debug(f"[+] Workbook already exists, adding new worksheet to it")
+        logging.debug(f"[+] Workbook {filename} already exists, adding new worksheet to it")
         if sheetname in wb.sheetnames:
             ws = wb.create_sheet(sheetname + " NEW")
         else:
             ws = wb.create_sheet(sheetname)
     else:
-        logging.debug(f"[+] Creating new workbook")
+        logging.debug(f"[+] Creating new Excel workbook {filename}")
         wb = Workbook()
         ws = wb.active
         ws.title = sheetname
@@ -143,7 +143,6 @@ def main():
         parser = cli2json.get_parser_from_filename(infilename)
 
     logging.debug(f"[+] Using parser '{parser}'")
-    # Insert the header row in upper case and without the underscores
     table = parse_json_to_table(json_data, args.os, parser)
 
     # Export the data according to the file type specified
@@ -154,7 +153,7 @@ def main():
                 for row in table:
                     c.writerow(row)
         elif ".xls" in args.outfile:        # Also works for .xlsx
-            add_table_to_workbook(table, args.outfile)
+            add_table_to_workbook(table, args.outfile, sheetname=parser)
         logging.info(f"[+] Done writing data to {args.outfile}")
     else:
         # If no output file is specified just print raw text to stdout

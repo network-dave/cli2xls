@@ -40,7 +40,7 @@ def main():
     argparser.add_argument(
         "--outfile",
         metavar="outputfile.xlsx",
-        required=True,
+        #required=True,
         help="save output to JSON file"
         )        
     argparser.add_argument(
@@ -86,6 +86,9 @@ def main():
     # Create flattened table out of JSON data
     table = json2xls.parse_json_to_table(json_data, args.os, parser)
 
+    if not args.outfile:
+        args.outfile = device_name + ".xlsx"
+    
     # Open workbook and write table to worksheet
     json2xls.add_table_to_workbook(table, args.outfile, parser)
 
@@ -103,5 +106,5 @@ if __name__ == "__main__":
     except Exception as e:
         logging.critical("[!] An error occured during the operation (exit code 1)")
         logging.critical("[!] " + str(e))
-        raise e
+        #raise e
         sys.exit(1)

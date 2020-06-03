@@ -110,6 +110,7 @@ def parse_cli_to_json(device_name, os, parser, cli_output):
     '''
     Parse CLI output to JSON data with Genie
     '''
+    logging.debug(f"[+] Parsing CLI from device {device_name} with parser \'{parser}\' (os={os})")
     device = Device(name=device_name, os=os)
     device.custom.abstraction = {"order": ["os"]}
     result = device.parse(parser, output=cli_output)
@@ -179,9 +180,6 @@ def main():
         parser = get_parser_from_filename(infilename)
 
     # Parse CLI output to JSON data
-    logging.debug(f"[+] Parsing device {device_name} with parser \'{parser}\' (os={args.os})")
-    logging.debug(f"[+] Raw data:")
-    logging.debug(cli_output)
     result = parse_cli_to_json(
         device_name=device_name, 
         os=args.os, 
