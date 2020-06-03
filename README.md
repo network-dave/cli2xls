@@ -11,7 +11,7 @@ Parse raw CLI output from network devices to structured JSON using the Cisco pyA
 Convert JSON files to Excel spreadsheets. Relies on a set of custom parsers located in the "jsonparsers" subdirectory.
 
 
-### cli2xls.py (work in progress)
+### cli2xls.py
 
 Relies on the two aforementionned scripts to convert CLI to JSON and then directly to XLS.
 
