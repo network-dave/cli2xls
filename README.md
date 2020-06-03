@@ -13,9 +13,8 @@ Convert JSON files to Excel spreadsheets. Relies on a set of custom parsers loca
 
 ### cli2xls.py
 
-Relies on the two aforementionned scripts to convert CLI to JSON and then directly to XLS.
+Relies on the two aforementionned scripts to convert CLI directly to Excel.
 
-It can also colorize the spreadsheets using xlscolors.py.
 
 ## Requirements / Getting started
 ```shell
