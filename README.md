@@ -48,12 +48,6 @@ To process batches of files, use something like:
 find ./*.txt -exec sh -c "python cli2xls.py --infile {}" \;
 ```
 
-Use xlscolors.py on top to colorize your newly created Excel spreadsheets:
-
-```shell
-find ./*.txt -exec sh -c "python cli2xls.py --infile {} && python xlscolors.py --infile {}" \;
-```
-
 
 ## License
 
