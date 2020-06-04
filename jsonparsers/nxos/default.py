@@ -1,6 +1,6 @@
 '''
 
-Default JSON parser (NXOS) - Get all leaf keys recursively and build a table based on them
+Default JSON parser - Get all leaf keys recursively and build a table based on them
 
 '''
 
@@ -28,7 +28,7 @@ def parse(json_data):
         '''
         global table
 
-        for k, v in json_data.items():
+        for _, v in json_data.items():
             if isinstance(v, dict):
                 make_table(v, leaf_keys)
             else:

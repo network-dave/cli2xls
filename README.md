@@ -34,7 +34,7 @@ Use ```--help``` to display usage and options.
 - If no ```--outfile``` is specified, the script will create a new file based on the ```device_name```, or simply print to STDOUT
 - If no parser is specified, the Genie/JSON parser will be infered from the filename using Regexes
 - The ```jsonparsers/``` directory and subdirectory must be present to parse JSON to Excel tables
-- JSON parsers are simple Python modules which implement a ```parse()``` function that returns a list of lists (first item is thus the column header)
+- JSON parsers are simple Python modules which implement a ```parse()``` function that returns an array with the  in which the first row is the header
 - If no module exists for the selected parser, the ```default.py``` module is used, which parses all the leaf objects. This works for some commands like ```show interface status```
 - If the Excel file/workbook exists, the new spreadsheet will be added at the end, if not a new Excel file will be created
 - The title of the new spreadsheet is the name of the parser

@@ -28,20 +28,20 @@ def main():
     '''
     # Parse command line argument
     argparser = argparse.ArgumentParser(
-        description="Read network device CLI output and print formatted JSON"
+        description="Read network device CLI output and parse it to an Excel spreadsheet"
         )
     argparser.add_argument(
         "--infile",
         metavar="inputfile.txt",
         required=True,
         type=argparse.FileType("r"), 
-        help="text file containing show command output (use '-' for stdin)"
+        help="text file containing show commands output (use '-' for stdin)"
         )
     argparser.add_argument(
         "--outfile",
         metavar="outputfile.xlsx",
         #required=True,
-        help="save output to JSON file"
+        help="output to XLS file (default=use device_name.xlsx as filename)"
         )        
     argparser.add_argument(
         "--os",
