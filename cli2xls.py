@@ -62,9 +62,9 @@ def main():
 
     # Configure logging
     if args.verbose:
-        logging.basicConfig(format="%(message)s", level=logging.DEBUG)
-    else:
         logging.basicConfig(format="%(message)s", level=logging.INFO)
+    else:
+        logging.basicConfig(format="%(message)s", level=logging.WARNING)
 
     # Load text data from file handler (it has already been opened by argparse)
     with args.infile as f:
@@ -104,7 +104,6 @@ if __name__ == "__main__":
         print()
         sys.exit(1)
     except Exception as e:
-        logging.critical("[!] An error occured during the operation (exit code 1)")
-        logging.critical("[!] " + str(e))
+        logging.critical(f"[!] An error occured during the operation ({str(e)})")
         #raise e
         sys.exit(1)

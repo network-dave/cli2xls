@@ -11,7 +11,7 @@ Usage:          see cli2json.py --help
 
 Automatic parser selection:
 
-    The Genie parser will be infered from the filename:
+    The Genie parser to use will be infered from the filename:
         MyDevice_show-interfaces-status.txt -> "show interfaces status"
         MyDevice_show-vlan_12345.txt -> "show vlan"
 
@@ -110,7 +110,7 @@ def parse_cli_to_json(device_name, os, parser, cli_output):
     '''
     Parse CLI output to JSON data with Genie
     '''
-    logging.debug(f"[+] Parsing CLI from device {device_name} with parser \'{parser}\' (os={os})")
+    logging.info(f"[+] Parsing CLI from device {device_name} with parser \'{parser}\' (os={os})")
     device = Device(name=device_name, os=os)
     device.custom.abstraction = {"order": ["os"]}
     result = device.parse(parser, output=cli_output)
@@ -161,9 +161,9 @@ def main():
 
     # Configure logging
     if args.verbose:
-        logging.basicConfig(format="%(message)s", level=logging.DEBUG)
-    else:
         logging.basicConfig(format="%(message)s", level=logging.INFO)
+    else:
+        logging.basicConfig(format="%(message)s", level=logging.WARNING)
 
     # Load text data from file handler (it has already been opened by argparse)
     with args.infile as f:
@@ -186,13 +186,13 @@ def main():
         parser=parser,
         cli_output=cli_output
         )
-    logging.debug(f"[!] Done parsing device {device_name}, dumping JSON with indent {args.indent}")
+    logging.info(f"[!] Done parsing device {device_name}, dumping JSON with indent {args.indent}")
 
     # Print JSON to file or stdout and quit
     if args.outfile:
         with open(args.outfile, "w") as f:
             f.write(json.dumps(result, indent=args.indent))
-        logging.debug(f"[!] Done writing JSON to {args.outfile}")
+        logging.info(f"[!] Done writing JSON to {args.outfile}")
     else:
         print(json.dumps(result, indent=args.indent))
 
@@ -207,7 +207,5 @@ if __name__ == "__main__":
         print()
         sys.exit(1)
     except Exception as e:
-        logging.critical("[!] An error occured during the operation (exit code 1)")
-        logging.critical("[!] " + str(e))
+        logging.critical(f"[!] An error occured during the operation ({str(e)})")
         sys.exit(1)
-

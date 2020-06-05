@@ -39,12 +39,12 @@ def parse_json_to_table(json_data, device_os, parser):
 
     # Import the JSON parser module from the jsonparsers/os subdirectory
     path = os.path.join(".", "jsonparsers", device_os)
-    logging.debug(f"[+] Loading JSON parser module {os.path.join(path, parser)}")
+    logging.info(f"[+] Loading JSON parser module {os.path.join(path, parser)}")
     sys.path.append(os.path.abspath(path))
 
     # If the specified module does not exist in jsonparsers/ import the default parser
     if not os.path.exists(os.path.join(path, parser+".py")):
-        logging.debug("[+] No file found, loading default JSON parser module")
+        logging.info("[+] No file found, loading default JSON parser module")
         parser = DEFAULT_PARSER
 
     try:
@@ -66,19 +66,20 @@ def add_table_to_workbook(table, filename, sheetname="default"):
     # If XLS file exists, insert the table in a new worksheet else create a new workbook file
     if os.path.exists(filename):
         wb = load_workbook(filename)
-        logging.debug(f"[+] Workbook {filename} already exists, adding new worksheet to it")
+        logging.info(f"[+] Workbook {filename} already exists, adding new worksheet to it")
         if sheetname in wb.sheetnames:
             ws = wb.create_sheet(sheetname + " NEW")
         else:
             ws = wb.create_sheet(sheetname)
     else:
-        logging.debug(f"[+] Creating new Excel workbook {filename}")
+        logging.info(f"[+] Creating new Excel workbook {filename}")
         wb = Workbook()
         ws = wb.active
         ws.title = sheetname
 
     for row in table:
-        ws.append(list(row))
+        # Convert each item in the row in a string to avoid type errors when appending
+        ws.append([str(cell) for cell in row])
     
     wb.save(filename = filename)
 
@@ -122,14 +123,14 @@ def main():
 
     # Configure logging
     if args.verbose:
-        logging.basicConfig(format="%(message)s", level=logging.DEBUG)
-    else:
         logging.basicConfig(format="%(message)s", level=logging.INFO)
+    else:
+        logging.basicConfig(format="%(message)s", level=logging.WARNING)
 
     # Load and deserialize JSON data from filehandler (it has already been opened by argparse)
     with args.infile as f:
         infilename = f.name
-        logging.debug(f"[+] Loading JSON data from {infilename}")
+        logging.info(f"[+] Loading JSON data from {infilename}")
         json_data = json.loads(f.read())
 
     # If no data is present we'll just exit with error code 1
@@ -142,7 +143,7 @@ def main():
     else:
         parser = cli2json.get_parser_from_filename(infilename)
 
-    logging.debug(f"[+] Using parser '{parser}'")
+    logging.info(f"[+] Using parser '{parser}'")
     table = parse_json_to_table(json_data, args.os, parser)
 
     # Export the data according to the file type specified
@@ -170,11 +171,9 @@ if __name__ == "__main__":
         print()
         sys.exit(1)
     except json.decoder.JSONDecodeError:
-        logging.warning("[!] An error occured while decoding the JSON data (exit code 1)")
+        logging.critical("[!] An error occured while decoding the JSON data (exit code 1)")
         sys.exit(1)
     except Exception as e:
-        logging.warning("[!] An error occured during the operation (exit code 1)")
-        logging.warning("[!] " + str(e))
-        #raise e
+        logging.critical(f"[!] An error occured during the operation ({str(e)})")
         sys.exit(1)
     
