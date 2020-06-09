@@ -91,8 +91,7 @@ def main():
     
     # Open workbook and write table to worksheet
     json2xls.add_table_to_workbook(table, args.outfile, parser)
-
-
+    
 
 if __name__ == "__main__":
     '''

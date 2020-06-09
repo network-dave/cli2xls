@@ -161,6 +161,7 @@ def main():
         for row in table:
             print("\t".join(str(s) for s in row))
 
+
 if __name__ == "__main__":
     '''
     main()

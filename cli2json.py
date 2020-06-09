@@ -37,6 +37,7 @@ import json
 import logging
 
 from genie.conf.base import Device
+from ntc_templates.parse import parse_output
 
 # Default options
 DEFAULT_OS = "nxos"
@@ -106,14 +107,22 @@ def get_parser_from_filename(filename, os=DEFAULT_OS):
 
     return s
 
-def parse_cli_to_json(device_name, os, parser, cli_output):
+def parse_cli_to_json(device_name, os, parser, cli_output, use_genie=False):
     '''
     Parse CLI output to JSON data with Genie
     '''
     logging.info(f"[+] Parsing CLI from device {device_name} with parser \'{parser}\' (os={os})")
-    device = Device(name=device_name, os=os)
-    device.custom.abstraction = {"order": ["os"]}
-    result = device.parse(parser, output=cli_output)
+    if use_genie:
+        device = Device(name=device_name, os=os)
+        device.custom.abstraction = {"order": ["os"]}
+        result = device.parse(parser, output=cli_output)
+    else:
+        # TextFSM needs CLI prompts to be removed
+        tmp = cli_output.splitlines()
+        tmp = [ line for line in tmp if device_name+">" not in line and device_name+"#" not in line ]
+        cli_output = "\n".join(tmp)
+        platform = "cisco_" + os
+        result = parse_output(platform=platform, command=parser, data=cli_output)
     return result
 
 
@@ -146,6 +155,11 @@ def main():
         "--parser",
         #default=DEFAULT_PARSER,    # if we do this we can't overwrite the default parser later on
         help="Genie parser to use (default=infered from filename)"
+        )
+    argparser.add_argument(
+        "--genie",
+        action="store_true",
+        help="Use Genie parsing library instead of ntc-templates (default=False)"
         )
     argparser.add_argument(
         "--indent",
@@ -184,7 +198,8 @@ def main():
         device_name=device_name, 
         os=args.os, 
         parser=parser,
-        cli_output=cli_output
+        cli_output=cli_output,
+        use_genie=args.genie
         )
     logging.info(f"[!] Done parsing device {device_name}, dumping JSON with indent {args.indent}")
 
