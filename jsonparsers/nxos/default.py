@@ -1,6 +1,6 @@
 '''
 
-Default JSON parser - Get all leaf keys recursively and build a table based on them
+Default JSON parser - Get all leaf keys recursively and build a list array with them
 
 '''
 
