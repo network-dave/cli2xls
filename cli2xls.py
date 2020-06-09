@@ -51,7 +51,7 @@ def main():
     argparser.add_argument(
         "--parser",
         #default=DEFAULT_PARSER,    # if we do this we can't overwrite the default parser later on
-        help="Genie parser to use (default=infered from filename)"
+        help="Parser/template to use (default=infered from filename)"
         )
     argparser.add_argument(
         "--verbose",
@@ -71,10 +71,10 @@ def main():
         infilename = f.name
         cli_output = f.read()
 
-    # If no Genie parser is specified we'll extract it from the filename or fallback to the default parser
+    # If no parser/template is specified we'll extract it from the filename or fallback to the default parser
     device_name = cli2json.get_device_name_from_filename(infilename)
         
-    # Select Genie parser or infer from filename
+    # Select parser/template or infer from filename
     if args.parser:
         parser = args.parser
     else:
@@ -84,7 +84,7 @@ def main():
     json_data = cli2json.parse_cli_to_json(device_name, args.os, parser, cli_output)
 
     # Create flattened table out of JSON data
-    table = json2xls.parse_json_to_table(json_data, args.os, parser)
+    table = json2xls.parse_json_to_table(json_data)
 
     if not args.outfile:
         args.outfile = device_name + ".xlsx"

@@ -9,9 +9,9 @@ Author:         David Paneels
 Usage:          see cli2json.py --help
     
 
-Automatic parser selection:
+Automatic parser/template selection:
 
-    The Genie parser to use will be infered from the filename:
+    The parser to use will be infered from the filename:
         MyDevice_show-interfaces-status.txt -> "show interfaces status"
         MyDevice_show-vlan_12345.txt -> "show vlan"
 
@@ -25,7 +25,7 @@ Automatic parser selection:
 
     The parser can also be specified explicitely with the "--parser" option
 
-For a list of available parsers, please visit https://pubhub.devnetcloud.com/media/genie-feature-browser/docs/#/parsers
+For a list of available Genie parsers, please visit https://pubhub.devnetcloud.com/media/genie-feature-browser/docs/#/parsers
 
 '''
 
@@ -36,7 +36,6 @@ import re
 import json
 import logging
 
-from genie.conf.base import Device
 from ntc_templates.parse import parse_output
 
 # Default options
@@ -63,7 +62,7 @@ def get_device_name_from_filename(filename, default=DEFAULT_DEVICENAME):
 
 def get_parser_from_filename(filename, os=DEFAULT_OS):
     '''
-    Infer Genie parser name from filename
+    Infer parser name from filename
     '''
     # The parser name starts at the first "show" statement and ends at the next underscore
     r = re.search(r"(show.*?)[_.]", filename)  
@@ -109,10 +108,15 @@ def get_parser_from_filename(filename, os=DEFAULT_OS):
 
 def parse_cli_to_json(device_name, os, parser, cli_output, use_genie=False):
     '''
-    Parse CLI output to JSON data with Genie
+    Parse CLI output to JSON data
     '''
     logging.info(f"[+] Parsing CLI from device {device_name} with parser \'{parser}\' (os={os})")
     if use_genie:
+        try:
+            from genie.conf.base import Device
+        except:
+            logging.critical("[!] Could not load Genie module")
+            sys.exit(1)
         device = Device(name=device_name, os=os)
         device.custom.abstraction = {"order": ["os"]}
         result = device.parse(parser, output=cli_output)
@@ -154,7 +158,7 @@ def main():
     argparser.add_argument(
         "--parser",
         #default=DEFAULT_PARSER,    # if we do this we can't overwrite the default parser later on
-        help="Genie parser to use (default=infered from filename)"
+        help="Parser to use (default=infered from filename)"
         )
     argparser.add_argument(
         "--genie",
@@ -184,10 +188,10 @@ def main():
         infilename = f.name
         cli_output = f.read()
 
-    # If no Genie parser is specified we'll extract it from the filename or fallback to the default parser
+    # If no parser is specified we'll extract it from the filename or fallback to the default parser
     device_name = get_device_name_from_filename(infilename)
         
-    # Select Genie parser or infer from filename
+    # Select parser or infer from filename
     if args.parser:
         parser = args.parser
     else:

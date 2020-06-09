@@ -3,7 +3,7 @@
 '''
 
 Name:           json2xls.py
-Description:    Read JSON data and write a flattened table in XLS or CSV format
+Description:    Read JSON data parsed with ntc-templates and write a table in XLS or CSV format
 Author:         David Paneels
 
 Usage:          see json2xls.py --help
@@ -26,37 +26,30 @@ import cli2json
 
 # Global options
 DELIMITER = ";"
-DEFAULT_OS = "nxos"
-DEFAULT_PARSER = "default"
 
 
-def parse_json_to_table(json_data, device_os, parser):
+def parse_json_to_table(json_data):
     '''
-    Make a flattened table out of JSON data according to a specific parser
+    Convert ntc-templates JSON data to a list array
     '''
-    # Put the dashes back into the parser name to load the file (yes, I know...)
-    parser = parser.replace(" ", "-")
+    # Get all keys from JSON items and build column header
+    table = []
+    header = []
+    for item in json_data:
+        for key, _ in item.items():
+            if key not in header:
+                header.append(key)
 
-    # Import the JSON parser module from the jsonparsers/os subdirectory
-    path = os.path.join(".", "jsonparsers", device_os)
-    logging.info(f"[+] Loading JSON parser module {os.path.join(path, parser)}")
-    sys.path.append(os.path.abspath(path))
+    # Get value for each key in header (if key does not exist returns "N/A")
+    for item in json_data:
+        row = []
+        for key in header:
+            row.append(item.get(key, "N/A"))
+        table.append(row)
 
-    # If the specified module does not exist in jsonparsers/ import the default parser
-    if not os.path.exists(os.path.join(path, parser+".py")):
-        logging.info("[+] No file found, loading default JSON parser module")
-        parser = DEFAULT_PARSER
-
-    try:
-        jsonparser = __import__(parser)
-    except Exception as e:
-        logging.critical(f"[!] Error while loading JSON parser module (exit code 1)")
-        logging.critical(f"[!] {str(e)}")
-        sys.exit(1)
-
-    # Make flattened table out of JSON data
-    table = jsonparser.parse(json_data)
-
+    # Make header uppercase and prepend row to table
+    header = [key.upper() for key in header]
+    table = [header] + table
     return table
 
 def add_table_to_workbook(table, filename, sheetname="default"):
@@ -90,29 +83,21 @@ def main():
     '''
     # Parse command line arguments
     argparser = argparse.ArgumentParser(
-        description="Read JSON data and write an XLS/CSV file"
+        description="Read JSON data and write an XLS or CSV file"
         )
     argparser.add_argument(
+        "-i",
         "--infile",
-        metavar="inputfile.json",
+        metavar="filename.json",
         required=True,
         type=argparse.FileType("r"),
         help="JSON file (use '-' to read from stdin)",
         )
     argparser.add_argument(
+        "-o",
         "--outfile",
-        metavar="FILENAME",
+        metavar="filename.xls",
         help="save output to Excel or CSV file (supported formats: .xls, .xlsx, .csv)"
-        )
-    argparser.add_argument(
-        "--os",
-        default=DEFAULT_OS,
-        help=f"network OS which originated the output (default={DEFAULT_OS})"
-        )
-    argparser.add_argument(
-        "--parser",
-        #default=DEFAULT_PARSER,    # if we do this we can't overwrite the default parser later on
-        help="JSON parser (default=infered from filename, fallback to jsonparser/os/default.py)"
         )
     argparser.add_argument(
         "--verbose",
@@ -135,16 +120,10 @@ def main():
 
     # If no data is present we'll just exit with error code 1
     if not json_data:
+        logging.warning("[!] JSON data structure is empty")
         sys.exit(1)
 
-    # Select JSON parser or infer from filename
-    if args.parser:
-        parser = args.parser
-    else:
-        parser = cli2json.get_parser_from_filename(infilename)
-
-    logging.info(f"[+] Using parser '{parser}'")
-    table = parse_json_to_table(json_data, args.os, parser)
+    table = parse_json_to_table(json_data)
 
     # Export the data according to the file type specified
     if args.outfile:
@@ -154,7 +133,11 @@ def main():
                 for row in table:
                     c.writerow(row)
         elif ".xls" in args.outfile:        # Also works for .xlsx
-            add_table_to_workbook(table, args.outfile, sheetname=parser)
+            add_table_to_workbook(
+                table, 
+                args.outfile, 
+                sheetname=cli2json.get_parser_from_filename(infilename)
+                )
         logging.info(f"[+] Done writing data to {args.outfile}")
     else:
         # If no output file is specified just print raw text to stdout
