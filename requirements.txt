@@ -1,2 +1,2 @@
-pyats[library]
+ntc-templates
 openpyxl

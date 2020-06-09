@@ -31,6 +31,7 @@ def main():
         description="Read network device CLI output and parse it to an Excel spreadsheet"
         )
     argparser.add_argument(
+        "-i",
         "--infile",
         metavar="inputfile.txt",
         required=True,
@@ -38,10 +39,11 @@ def main():
         help="text file containing show commands output (use '-' for stdin)"
         )
     argparser.add_argument(
+        "-o",
         "--outfile",
         metavar="outputfile.xlsx",
         #required=True,
-        help="output to XLS file (default=use device_name.xlsx as filename)"
+        help="output to XLS file (default=<device_name>.xlsx)"
         )        
     argparser.add_argument(
         "--os",

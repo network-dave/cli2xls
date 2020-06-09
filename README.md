@@ -4,11 +4,11 @@ Set of tools to convert raw CLI output from Cisco devices to human readable Exce
 
 ### cli2json.py
 
-Parse raw CLI output from network devices to structured JSON using the Cisco pyATS/Genie library.
+Parse raw CLI output from network devices to structured JSON using the "NTC Templates" library.
 
 ### json2xls.py
 
-Convert JSON files to Excel spreadsheets. Relies on a set of custom parsers located in the "jsonparsers" subdirectory.
+Convert JSON files to Excel spreadsheets.
 
 
 ### cli2xls.py
@@ -18,7 +18,7 @@ Relies on the two aforementionned scripts to convert CLI output directly to Exce
 
 ## Requirements / Getting started
 ```shell
-pip install pyats[library]
+pip install ntc-templates
 pip install openpyxl
 ```
 ```shell
@@ -32,10 +32,7 @@ Use ```--help``` to display usage and options.
 - The only mandatory argument is ```--infile```
 - '-' can be used in place of the filename to read from STDIN
 - If no ```--outfile``` is specified, the script will create a new file based on the ```device_name```, or simply print to STDOUT
-- If no parser is specified, the Genie/JSON parser will be infered from the filename using Regexes
-- The ```jsonparsers/``` directory and subdirectory must be present to parse JSON to Excel tables
-- JSON parsers are simple Python modules which implement a ```parse()``` function that returns an array with the  in which the first row is the header
-- If no module exists for the selected parser, the ```default.py``` module is used, which parses all the leaf objects. This works for some commands like ```show interface status```
+- If no parser is specified, the parser/template will be infered from the filename using Regexes
 - If the Excel file/workbook exists, the new spreadsheet will be added at the end, if not a new Excel file will be created
 - The title of the new spreadsheet is the name of the parser
 - ```--verbose``` prints some additional information to STDERR

@@ -91,10 +91,6 @@ def get_parser_from_filename(filename, os=DEFAULT_OS):
     s = re.sub(r"\bfeature set\b", "feature-set", s)
     s = re.sub(r"\baccess list\b", "access-list", s)
 
-    # Get alternative parser because no specific parser is available yet
-    s = s.replace("show vpc brief", "show vpc")
-    s = s.replace("show feature-set", "show feature")
-
     # Is it interface or interfaceS ?
     if "status" in s and "ios" in os:
         s = re.sub(r"\bint\b", "interfaces", s)
@@ -139,6 +135,7 @@ def main():
         description="Read network device CLI output and print formatted JSON"
         )
     argparser.add_argument(
+        "-i",
         "--infile",
         metavar="inputfile.txt",
         required=True,
@@ -146,6 +143,7 @@ def main():
         help="text file containing show command output (use '-' for stdin)"
         )
     argparser.add_argument(
+        "-o",
         "--outfile", 
         metavar="FILENAME",
         help="save output to JSON file"
