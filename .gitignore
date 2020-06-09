@@ -3,4 +3,6 @@
 *.yaml
 *.xls
 *.xlsx
+*.sh
 __pycache__
+
