@@ -14,6 +14,9 @@ Convert JSON files to Excel spreadsheets.
 
 Relies on the two aforementionned scripts to convert CLI output directly to Excel.
 
+### cli2singlexls.py
+
+Parses a group of text files into a single Excel spreadsheet (works best for a single command output from all devices)
 
 ## Requirements / Getting started
 ```shell

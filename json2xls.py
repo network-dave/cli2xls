@@ -28,7 +28,7 @@ import cli2json
 DELIMITER = ";"
 
 
-def parse_json_to_table(json_data):
+def parse_json_to_table(json_data, add_header=True):
     '''
     Convert ntc-templates JSON data to a list array
     '''
@@ -48,8 +48,9 @@ def parse_json_to_table(json_data):
         table.append(row)
 
     # Make header uppercase and prepend row to table
-    header = [key.upper() for key in header]
-    table = [header] + table
+    if add_header:
+        header = [key.upper() for key in header]
+        table = [header] + table
     return table
 
 def add_table_to_workbook(table, filename, sheetname="default"):

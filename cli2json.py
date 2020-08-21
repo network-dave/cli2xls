@@ -22,10 +22,9 @@ Automatic parser/template selection:
     "nei" will be replaced by "neighbors"
     "det" will be replaced by "detail"
     "desc" or "descr" will be replaced by "description"
+    ...
 
     The parser can also be specified explicitely with the "--parser" option
-
-For a list of available Genie parsers, please visit https://pubhub.devnetcloud.com/media/genie-feature-browser/docs/#/parsers
 
 '''
 
@@ -41,7 +40,7 @@ from ntc_templates.parse import parse_output
 # Default options
 DEFAULT_OS = "nxos"
 DEFAULT_DEVICENAME = "Device"
-DEFAULT_PARSER = "show interface status"
+DEFAULT_PARSER = ""
 
 
 def get_device_name_from_filename(filename, default=DEFAULT_DEVICENAME):
