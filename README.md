@@ -57,6 +57,11 @@ find ./*.txt -exec sh -c "python cli2xls.py --infile {}" \;
 
 ## License
 
-Author: David Paneels
+Copyright (C) 2020 David Paneels
 
-This code is private and for internal use only.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+https://www.gnu.org/licenses/gpl-3.0.html
