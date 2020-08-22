@@ -20,21 +20,18 @@ Parses a group of text files into a single Excel spreadsheet (works best for a s
 
 ## Requirements / Getting started
 ```shell
-pip install ntc-templates
-pip install openpyxl
+$ pip3 install -t requirements.txt
 ```
 
-If you need to write custom templates, you can also fork the ntc-templates repository from Github and install the module from there:
+If you need to write custom parsing templates, you can also fork the ntc-templates repository from Github and install the module from there:
 ```shell
-git clone https://github.com/networktocode/ntc-templates.git
-pip install -e ntc-templates/[dev]
+$ git clone https://github.com/networktocode/ntc-templates.git
+$ pip install -e ntc-templates/[dev]
 ```
 
 ```shell
-python cli2xls.py --infile network-device_show-cdp-nei.txt --outfile NetworkDevice.xlsx
+$ python cli2xls.py --infile network-device_show-cdp-nei.txt --outfile NetworkDevice.xlsx
 ```
-
-
 
 ## Usage
 
@@ -51,7 +48,7 @@ Use ```--help``` to display usage and options.
 
 To process batches of files, use something like:
 ```shell
-find ./*.txt -exec sh -c "python cli2xls.py --infile {}" \;
+$ find ./*.txt -exec sh -c "python cli2xls.py --infile {}" \;
 ```
 
 
