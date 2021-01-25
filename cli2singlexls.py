@@ -90,14 +90,17 @@ def main():
         json_data = cli2json.parse_cli_to_json(device_name, args.os, parser, cli_output)
 
         # Create flattened table out of JSON data, only add the header once
-        if i == 0:
-            table = json2xls.parse_json_to_table(json_data)
-            # Add the device_name as the first column of the table
-            table[0] = [ "DEVICE" ] + table[0]
-            table[1] = [ device_name ] + table[1]
-        else:
-            table = json2xls.parse_json_to_table(json_data, add_header=False)
-            table[0] = [ device_name ] + table[0]
+        try:
+            if i == 0:
+                table = json2xls.parse_json_to_table(json_data)
+                # Add the device_name as the first column of the table
+                table[0] = [ "DEVICE" ] + table[0]
+                table[1] = [ device_name ] + table[1]
+            else:
+                table = json2xls.parse_json_to_table(json_data, add_header=False)
+                table[0] = [ device_name ] + table[0]
+        except:
+            logging.warn(f"[!] Error while parsing file {infile}")
 
         # Append the entry to the result table
         result += table
@@ -118,5 +121,5 @@ if __name__ == "__main__":
         sys.exit(1)
     except Exception as e:
         logging.critical(f"[!] An error occured during the operation ({str(e)})")
-        #raise e
+        raise e
         sys.exit(1)
